@@ -4,7 +4,7 @@ const iState = {
     loggedIn: false,
     userDetails: {}
 }
-
+//reducer changes data only to the store
 const reducer = (state=iState, action) => {
     if(action.type == userActionTypes.LOGIN_SUCCESS) {
         return {
