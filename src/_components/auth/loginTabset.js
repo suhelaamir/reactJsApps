@@ -126,6 +126,8 @@ class LoginTabset extends Component {
     render() {
         //destructuring the state value
         const {userName, password, loginSubmitted, user, regSubmitted} = this.state;
+        let _validationReg = regSubmitted ? this.validatorReg.validate(this.state, 'user') : this.state.validationReg;
+        let _validatingLogin = loginSubmitted ? this.validatorLogin.validate(this.state, '') : this.state.validationLogin;
         return (
             <div>
                 <Fragment>
