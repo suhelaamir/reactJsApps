@@ -43,7 +43,7 @@ class LoginTabset extends Component {
             }
         ]);
 
-        this.validationReg = new FormValidator([
+        this.validatorReg = new FormValidator([
             {
                 field: 'firstName',
                 method: 'isEmpty',
@@ -102,12 +102,21 @@ class LoginTabset extends Component {
                 password: '',
                 confirmPassword: '',
                 userTypeId: 1
-            }
+            },
+            regSubmitted: false,
+            validationReg: this.validatorReg.valid(),
+            validationLogin: this.validatorLogin.valid()
         };
     }
 
     passwordMatch = (confirmPassword, state) => {
-        return state.user.password === confirmPassword
+        return state.user.password === confirmPassword;
+    }
+
+    handleChange(event) {
+        event.preventDefault();
+        const [name, value] = event.target;
+        this.setState({[name]: value});
     }
 
     render() {
