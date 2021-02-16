@@ -124,6 +124,8 @@ class LoginTabset extends Component {
     }
 
     render() {
+        //destructuring the state value
+        const {userName, password, loginSubmitted, user, regSubmitted} = this.state;
         return (
             <div>
                 <Fragment>
