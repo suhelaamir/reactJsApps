@@ -119,11 +119,15 @@ class LoginTabset extends Component {
         this.setState({[name]: value});
     }
 
+    tabChange(index) {
+        this.setState({tabIndex: index});
+    }
+
     render() {
         return (
             <div>
                 <Fragment>
-                    <Tabs>
+                    <Tabs selectedIndex={this.state.tabIndex} onSelect={(tabIndex) => this.tabChange(tabIndex)}>
                         <TabList className="nav nav-tabs tab-coupon">
                             <Tab className="nav-link"><Unlock/> Login</Tab>
                             <Tab className="nav-link"><User/> Register</Tab>
