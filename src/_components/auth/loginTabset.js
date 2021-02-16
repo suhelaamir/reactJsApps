@@ -4,11 +4,14 @@ import { User, Unlock, Flag } from "react-feather";
 
 //HOC
 import { withRouter } from "react-router-dom";
+//for popup notification
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+//login API call from the service
 import { userService } from "../../_services/login/user.service";
+//read the current router history
 import { history } from "../../_helpers/history";
-
+//connect the redux
 import { connect } from "react-redux";
 import { changeLoggedIn } from "../../_actions/user.actions";
 
