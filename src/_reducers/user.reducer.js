@@ -6,7 +6,7 @@ const iState = {
 }
 //only reducer can changes data to the store
 const reducer = (state=iState, action) => {
-    if(action.type == userActionTypes.LOGIN_SUCCESS) {
+    if(action.type === userActionTypes.LOGIN_SUCCESS) {
         return {
             loggedIn: action.payload.isLoggedIn,
             userDetails: action.payload.userData

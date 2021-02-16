@@ -1,9 +1,14 @@
-import React, { Component } from 'react';
+import React from 'react';
 import { Route, Redirect } from "react-router-dom";
-import App from '../_components/app';
+import Layouts from '../_components/layouts';
 
 export const PrivateRout = ({component: Component, ...rest}) => {
+    // return <Route {...rest} render={props => {
+    //     return localStorage.getItem('userDetails') ? <Layouts><Component {...props} /></Layouts> : <Redirect to={{pathname : 'auth/login', state: {from: props.location}}}/>
+    // }} />  
+
     return <Route {...rest} render={props => {
-        return localStorage.getItem('userDetails') ? <App><Component {...props} /></App> : <Redirect to={{pathname : 'auth/login', state: {from: props.location}}}/>
+        return localStorage.getItem('userDetails') ? <Layouts><Component {...props} /></Layouts> : 
+            <Layouts><Component {...props} /></Layouts>
     }} />  
 }   

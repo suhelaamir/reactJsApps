@@ -4,7 +4,7 @@ import reducer from '../_reducers/user.reducer';
 
 //you can create multiple store
 const mainReducer = combineReducers({
-    reducer
+    user: reducer
 });
 
 //https://github.com/zalmoxisus/redux-devtools-extension
