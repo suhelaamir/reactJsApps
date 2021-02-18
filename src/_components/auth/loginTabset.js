@@ -107,6 +107,11 @@ class LoginTabset extends Component {
             validationReg: this.validatorReg.valid(),
             validationLogin: this.validatorLogin.valid()
         };
+
+        this.handleChange = this.handleChange.bind(this);
+        this.doLogin = this.doLogin.bind(this);
+
+        this.logout();
     }
 
     passwordMatch = (confirmPassword, state) => {
@@ -115,13 +120,69 @@ class LoginTabset extends Component {
 
     handleChange(event) {
         event.preventDefault();
-        const [name, value] = event.target;
+        const {name, value} = event.target;
         this.setState({[name]: value});
     }
 
-    tabChange(index) {
+    tabChange = (index) => {
         this.setState({tabIndex: index});
     }
+
+    async doLogin(event) {
+        debugger;
+        event.preventDefault();
+        const validation = this.validatorLogin.validate(this.state, '');
+        this.setState({validationLogin: validation});
+
+        //update the state of input
+        this.setState({loginSubmitted: true});
+        const {userName, password} = this.state;
+
+        //make a call to API
+        if(validation.isValid) {
+            debugger;
+            userService.login(userName, password)
+            .then(
+                res => {
+                    debugger;
+                if(res.isSuccess) {
+                    if(res.data.id === 0) {
+                        this.clearLoginForm();
+                        toast.error("Please enter valid username and password !!", 'Login');
+                        localStorage.removeItem("userDetails");
+                    } else {
+                        localStorage.setItem("userDetails", JSON.stringify(res.data));
+                        this.props.setLoggedIn(true, res.data);
+                        this.clearLoginForm();
+                        history.push('/dashboard');
+                    }
+                } else {
+                    this.clearLoginForm();
+                    toast.error("Invalid credentials !!", "Login");
+                    localStorage.removeItem("userDetails");
+                }
+            },
+            error => {
+                toast.error("something went wrong, Please try again !!", 'Login');
+                this.clearLoginForm();
+            }
+            );
+        }
+    }
+
+    clearLoginForm = () => {
+        this.setState({
+            userName: '',
+            password: ''
+        });
+    }
+
+    logout = () => {
+        localStorage.clear();
+        //update the store with blank data once logout
+        this.props.setLoggedIn(false, {});
+    }
+
 
     render() {
         //destructuring the state value
@@ -138,14 +199,28 @@ class LoginTabset extends Component {
                         </TabList>
                     <TabPanel>
                         Login Form
-<form className="form-horizontal auth-form">
+<form className="form-horizontal auth-form" onSubmit={this.doLogin}>
                             <div className='form-group'>
-                                <input name="userName" type="email" className="form-control"
-                                    placeholder="Username" />
+                                <input name="userName" type="email" 
+                                className={"form-control" + (_validatingLogin.userName.isInvalid ? 'has-error' : '')}
+                                    placeholder="Username" value={userName} onChange={this.handleChange}/>
+                                    {
+                                        _validatingLogin.userName.isInvalid && 
+                                        <div className="help-block">
+                                            {_validatingLogin.userName.message}
+                                        </div>
+                                    }
                             </div>
                             <div className='form-group'>
-                                <input name="password" type="password" className="form-control"
-                                    placeholder="Password" />
+                                <input name="password" type="password" 
+                                className={"form-control" + (_validatingLogin.password.isInvalid ? 'has-error' : '')}
+                                    placeholder="Password" value={password} onChange={this.handleChange}/>
+                                    {
+                                        _validatingLogin.password.isInvalid && 
+                                        <div className="help-block">
+                                            {_validatingLogin.password.message}
+                                        </div>
+                                    }
 
                             </div>
                             <div className="form-button">
