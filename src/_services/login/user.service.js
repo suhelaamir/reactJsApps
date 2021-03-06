@@ -1,7 +1,8 @@
 import Global from '../../_helpers/global';
 
 export const userService={
-    login
+    login,
+    register
 }
 
 async function login(username, password) {
@@ -14,6 +15,21 @@ async function login(username, password) {
 
     return fetch(Global.BASE_API_PATH + 'UserMaster/Login/', requestOptions)
         .then(handleResponse)
+    .then(res => {
+        return res;
+    });
+}
+
+//register the user
+async function register(obj) {
+    var requestOptions = {
+        method: 'POST',
+        headers: {'Content-Type' : 'application/json'},
+        body: JSON.stringify(obj)
+    };
+
+    return fetch(Global.BASE_API_PATH + 'UserMaster/Save/', requestOptions)
+    .then(handleResponse)
     .then(res => {
         return res;
     });

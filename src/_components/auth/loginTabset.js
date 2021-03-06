@@ -1,5 +1,5 @@
 import React, { Component, Fragment } from 'react';
-import { Tabs,TabList,TabPanel,Tab } from "react-tabs";
+import { Tabs, TabList, TabPanel, Tab } from "react-tabs";
 import { User, Unlock, Flag } from "react-feather";
 
 //HOC
@@ -120,53 +120,53 @@ class LoginTabset extends Component {
 
     handleChange(event) {
         event.preventDefault();
-        const {name, value} = event.target;
-        this.setState({[name]: value});
+        const { name, value } = event.target;
+        this.setState({ [name]: value });
     }
 
     tabChange = (index) => {
-        this.setState({tabIndex: index});
+        this.setState({ tabIndex: index });
     }
 
     async doLogin(event) {
         debugger;
         event.preventDefault();
         const validation = this.validatorLogin.validate(this.state, '');
-        this.setState({validationLogin: validation});
+        this.setState({ validationLogin: validation });
 
         //update the state of input
-        this.setState({loginSubmitted: true});
-        const {userName, password} = this.state;
+        this.setState({ loginSubmitted: true });
+        const { userName, password } = this.state;
 
         //make a call to API
-        if(validation.isValid) {
+        if (validation.isValid) {
             debugger;
             userService.login(userName, password)
-            .then(
-                res => {
-                    debugger;
-                if(res.isSuccess) {
-                    if(res.data.id === 0) {
+                .then(
+                    res => {
+                        debugger;
+                        if (res.isSuccess) {
+                            if (res.data.id === 0) {
+                                this.clearLoginForm();
+                                toast.error("Please enter valid username and password !!", 'Login');
+                                localStorage.removeItem("userDetails");
+                            } else {
+                                localStorage.setItem("userDetails", JSON.stringify(res.data));
+                                this.props.setLoggedIn(true, res.data);
+                                this.clearLoginForm();
+                                history.push('/dashboard');
+                            }
+                        } else {
+                            this.clearLoginForm();
+                            toast.error("Invalid credentials !!", "Login");
+                            localStorage.removeItem("userDetails");
+                        }
+                    },
+                    error => {
+                        toast.error("something went wrong, Please try again !!", 'Login');
                         this.clearLoginForm();
-                        toast.error("Please enter valid username and password !!", 'Login');
-                        localStorage.removeItem("userDetails");
-                    } else {
-                        localStorage.setItem("userDetails", JSON.stringify(res.data));
-                        this.props.setLoggedIn(true, res.data);
-                        this.clearLoginForm();
-                        history.push('/dashboard');
                     }
-                } else {
-                    this.clearLoginForm();
-                    toast.error("Invalid credentials !!", "Login");
-                    localStorage.removeItem("userDetails");
-                }
-            },
-            error => {
-                toast.error("something went wrong, Please try again !!", 'Login');
-                this.clearLoginForm();
-            }
-            );
+                );
         }
     }
 
@@ -183,82 +183,175 @@ class LoginTabset extends Component {
         this.props.setLoggedIn(false, {});
     }
 
+    handleInputChange(event) {
+        event.preventDefault();
+        const { name, value } = event.target;
+        const {user} = this.state;
+        this.setState(
+            { 
+                ...user,
+                [name]: value 
+            }
+            );
+    }
+
+    clearRegForm = () => {
+        this.setState(
+            {
+                user: {
+                    firstName: '',
+                    lastName: '',
+                    email: '',
+                    userTypeId: 1,
+                    password: '',
+                    confirmPassword: ''
+                }
+            }
+        );
+    }
+
+    handleSubmit = (event) => {
+        event.preventDefault();
+        this.setState({regSubmitted: true});
+        const {user} = this.state;
+
+        const validation = this.validatorReg.validate(this.state, 'user')
+        this.setState({validationReg: validation});
+        if(validation.isValid) {
+            userService.register(user)
+            .then(
+                res => {
+                    if(res.isSuccess) {
+                        toast.success("Registration has been done successfully !!" , "Registration");
+                        this.clearRegForm();
+                        this.setState({
+                            tabIndex: 0
+                        });
+                    } else {
+                        toast.error(res.errors[0], "Registration");
+                    }
+                },
+                error => {
+                    
+                }
+                );
+        }
+    }
 
     render() {
-        //destructuring the state value
-        const {userName, password, loginSubmitted, user, regSubmitted} = this.state;
-        let _validationReg = regSubmitted ? this.validatorReg.validate(this.state, 'user') : this.state.validationReg;
-        let _validatingLogin = loginSubmitted ? this.validatorLogin.validate(this.state, '') : this.state.validationLogin;
+        //destructuring exthe state value
+        const { userName, password, loginSubmitted, user, regSubmitted } = this.state;
+        let _validatorReg = regSubmitted ? this.validatorReg.validate(this.state, 'user') : this.state.validationReg;
+        let _validatorLogin = loginSubmitted ? this.validatorLogin.validate(this.state, '') : this.state.validationLogin;
         return (
             <div>
                 <Fragment>
                     <Tabs selectedIndex={this.state.tabIndex} onSelect={(tabIndex) => this.tabChange(tabIndex)}>
                         <TabList className="nav nav-tabs tab-coupon">
-                            <Tab className="nav-link"><Unlock/> Login</Tab>
-                            <Tab className="nav-link"><User/> Register</Tab>
+                            <Tab className="nav-link"><Unlock /> Login</Tab>
+                            <Tab className="nav-link"><User /> Register</Tab>
                         </TabList>
-                    <TabPanel>
-                        Login Form
+                        <TabPanel>
+                            Login Form
 <form className="form-horizontal auth-form" onSubmit={this.doLogin}>
-                            <div className='form-group'>
-                                <input name="userName" type="email" 
-                                className={"form-control" + (_validatingLogin.userName.isInvalid ? 'has-error' : '')}
-                                    placeholder="Username" value={userName} onChange={this.handleChange}/>
+                                <div className='form-group'>
+                                    <input name="userName" type="email"
+                                        className={"form-control" + (_validatorLogin.userName.isInvalid ? 'has-error' : '')}
+                                        placeholder="Username" value={userName} onChange={this.handleChange} />
                                     {
-                                        _validatingLogin.userName.isInvalid && 
+                                        _validatorLogin.userName.isInvalid &&
                                         <div className="help-block">
-                                            {_validatingLogin.userName.message}
+                                            {_validatorLogin.userName.message}
                                         </div>
                                     }
-                            </div>
-                            <div className='form-group'>
-                                <input name="password" type="password" 
-                                className={"form-control" + (_validatingLogin.password.isInvalid ? 'has-error' : '')}
-                                    placeholder="Password" value={password} onChange={this.handleChange}/>
+                                </div>
+                                <div className='form-group'>
+                                    <input name="password" type="password"
+                                        className={"form-control" + (_validatorLogin.password.isInvalid ? 'has-error' : '')}
+                                        placeholder="Password" value={password} onChange={this.handleChange} />
                                     {
-                                        _validatingLogin.password.isInvalid && 
+                                        _validatorLogin.password.isInvalid &&
                                         <div className="help-block">
-                                            {_validatingLogin.password.message}
+                                            {_validatorLogin.password.message}
                                         </div>
                                     }
 
-                            </div>
-                            <div className="form-button">
-                                <button className="btn btn-primary" type="submit" >Login</button>
-                            </div>
-                        </form>
-                    </TabPanel>
-                    <TabPanel>
-                        Registration Form
-<form className="form-horizontal auth-form" >
-                            <div className="form-group">
-                                <input name="firstName" type="text" className='form-control'
-                                    placeholder="First Name" />
-                            </div>
-                            <div className="form-group">
-                                <input name="lastName" type="text" className='form-control'
-                                    placeholder="Last Name" />
+                                </div>
+                                <div className="form-button">
+                                    <button className="btn btn-primary" type="submit" >Login</button>
+                                </div>
+                            </form>
+                        </TabPanel>
+                        <TabPanel>
+                            Registration Form
+<form className="form-horizontal auth-form" onSubmit={this.handleSubmit}>
+                                <div className="form-group">
+                                    <input name="firstName" type="text" 
+                                    className={'form-control' + (_validatorReg.firstName.isInvalid ? 'has-error' : '')}
+                                        placeholder="First Name" value={user.firstName} onChange={this.handleInputChange} />
+                                        {
+                                            _validatorReg.firstName.isInvalid && 
+                                            <div className="help-block">
+                                                {_validatorReg.firstName.message}
+                                            </div>
+                                        }
+                                </div>
+                                <div className="form-group">
+                                    <input name="lastName" type="text" 
+                                    className={'form-control' + (_validatorReg.lastName.isInvalid ? 'has-error' : '')}
+                                        placeholder="Last Name" value={user.lastName} onChange={this.handleInputChange} />
+                                        {
+                                            _validatorReg.lastName.isInvalid &&
+                                            <div className="help-block">
+                                            {
+                                                _validatorReg.lastName.message
+                                            }
+                                            </div>
+                                        }
 
-                            </div>
-                            <div className="form-group">
-                                <input name="email" type="email" className='form-control'
-                                    placeholder="Email" />
-                            </div>
-                            <div className="form-group">
-                                <input name="password" type="password" className='form-control'
-                                    placeholder="Password" />
-
-                            </div>
-                            <div className="form-group">
-                                <input name="confirmPassword" type="password" className='form-control'
-                                    placeholder="Confirm Password" />
-
-                            </div>
-                            <div className="form-button">
-                                <button className="btn btn-primary" type="submit">Register</button>
-                            </div>
-                        </form>
-                    </TabPanel>
+                                </div>
+                                <div className="form-group">
+                                    <input name="email" type="email" 
+                                    className={'form-control'+(_validatorReg.email.isInvalid ? 'has-error' : '')}
+                                        placeholder="Email" value={user.email} onChange={this.handleInputChange}/>
+                                        {
+                                            _validatorReg.email.isInvalid &&
+                                            <div className="help-block">
+                                                {
+                                                    _validatorReg.email.message
+                                                }
+                                            </div>
+                                        }
+                                </div>
+                                <div className="form-group">
+                                    <input name="password" type="password" 
+                                    className={'form-control'+(_validatorReg.password.isInvalid ? 'has-error' : '')}
+                                        placeholder="Password" value={user.password} onChange={this.handleInputChange} />
+                                    {
+                                        _validatorReg.password.isInvalid && 
+                                        <div className="help-block">
+                                            {
+                                                _validatorReg.password.message
+                                            }
+                                        </div>
+                                    }
+                                </div>
+                                <div className="form-group">
+                                    <input name="confirmPassword" type="password" 
+                                    className={'form-control'+(_validatorReg.confirmPassword.isInvalid ? 'has-error' :'')}
+                                        placeholder="Confirm Password" value={user.confirmPassword} onChange={this.handleInputChange} />
+                                    {
+                                        _validatorReg.confirmPassword.isInvalid && 
+                                        <div className="help-block">
+                                            {_validatorReg.confirmPassword.message}
+                                        </div>
+                                    }
+                                </div>
+                                <div className="form-button">
+                                    <button className="btn btn-primary" type="submit">Register</button>
+                                </div>
+                            </form>
+                        </TabPanel>
                     </Tabs>
                 </Fragment>
                 <ToastContainer />
@@ -267,7 +360,7 @@ class LoginTabset extends Component {
     }
 }
 
-const mapStoreToProps = (state) =>{
+const mapStoreToProps = (state) => {
     return {
         user: state.user
     }
