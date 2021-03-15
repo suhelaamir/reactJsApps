@@ -6,14 +6,17 @@ class FormValidator {
     }
 
     validate(state, col) {
+        debugger;
         let validation = this.valid();
         this.validations.forEach(rule => {
 
             if (!validation[rule.field].isInvalid) {
+                debugger;
                 let field_value = null;
                 if (col === "") {
                     field_value = state[rule.field].toString();
                 } else {
+                    debugger;
                     field_value = state[col][rule.field].toString();
                 }
 
@@ -21,6 +24,7 @@ class FormValidator {
                 const validation_method = typeof rule.method === 'string' ? validator[rule.method] : rule.method;
 
                 if (validation_method(field_value, ...args, state) !== rule.validWhen) {
+                    debugger;
                     validation[rule.field] = { isInvalid: true, message: rule.message };
                     validation.isValid = false;
                 }

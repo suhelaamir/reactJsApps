@@ -1,15 +1,23 @@
 import Global from '../../_helpers/global';
+import authHeader from '../../_helpers/auth-header';
+
 
 export const userService={
     login,
-    register
+    register,
+
+    save,
+    update,
+    getAll,
+    getById,
+    delete: _delete
 }
 
 async function login(username, password) {
     debugger;
     const requestOptions = {
         method: 'POST',
-        header: {'Content-Type': 'application/json'},
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({username, password})
     }
 
@@ -37,6 +45,7 @@ async function register(obj) {
 
 function handleResponse(response) {
     return response.text().then(text => {
+        debugger;
         const data = text && JSON.parse(text);
 
         if(!response.ok) {
@@ -48,4 +57,79 @@ function handleResponse(response) {
         }
         return data;
     });
+}
+
+//all paid customer list
+
+async function getAll() {
+    debugger;
+    const requestOptions = {
+        method: 'GET',
+        headers: authHeader(false)
+    };
+
+    return fetch(Global.BASE_API_PATH + `Customers/GetAll/`, requestOptions)
+        .then(handleResponse)
+        .then(res => {
+            debugger;
+            return res;
+        });
+}
+
+
+//Crude operations on customer:
+
+async function save(obj) {
+    const requestOptions = {
+        method: 'POST',
+        headers: authHeader(false),
+        body: JSON.stringify(obj)
+    };
+
+    return fetch(Global.BASE_API_PATH + `Customers/Save/`, requestOptions)
+        .then(handleResponse)
+        .then(res => {
+            return res;
+        });
+}
+
+
+async function update(obj) {
+    const requestOptions = {
+        method: 'POST',
+        headers: authHeader(false),
+        body: JSON.stringify(obj)
+    };
+
+    return fetch(Global.BASE_API_PATH + `Customers/Update/`, requestOptions)
+        .then(handleResponse)
+        .then(res => {
+            return res;
+        });
+}
+
+async function getById(id) {
+    const requestOptions = {
+        method: 'GET',
+        headers: authHeader(false)
+    };
+
+    return fetch(Global.BASE_API_PATH + `Customers/GetById/${id}`, requestOptions)
+        .then(handleResponse)
+        .then(res => {
+            return res;
+        });
+}
+async function _delete(obj) {
+    const requestOptions = {
+        method: 'POST',
+        headers: authHeader(false),
+        body: JSON.stringify(obj)
+    };
+
+    return fetch(Global.BASE_API_PATH + `Customers/Delete/`, requestOptions)
+        .then(handleResponse)
+        .then(res => {
+            return res;
+        });
 }

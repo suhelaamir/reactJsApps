@@ -11,6 +11,7 @@ import { PrivateRout } from "./_privateRoute/privaterout";
 import Dashboard from "./_components/dashboard/dashboard";
 import Create_User from "./_components/users/create-user";
 import List_User from "./_components/users/list-user";
+import Customers from './_components/customers/customers';
 
 
 class App extends Component {
@@ -24,6 +25,7 @@ class App extends Component {
           <PrivateRout exact path="/dashboard" component={Dashboard} />
           <PrivateRout exact path="/users/create-user" component={Create_User} />
           <PrivateRout exact path="/users/list-user" component={List_User} />
+          <PrivateRout exact path="/customers" component={Customers} />
 
 
           <Route exact path="*" component={Login} />

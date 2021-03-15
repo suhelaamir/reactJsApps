@@ -7,7 +7,9 @@ import {
     // BarChart,
     // Settings,
     // Archive,
-    // LogIn
+    // LogIn,
+    LogOut,
+    User
 } from 'react-feather';
 
 export const MENUITEMS = [
@@ -17,5 +19,7 @@ export const MENUITEMS = [
             {path: '/users/list-user', title: 'User List', type: 'link'},
             {path: '/users/create-user', title: 'Create User', type: 'link'}
         ]
-    }
+    },
+    { path: '/customers', title: 'Customers', icon: User, type: 'link', active: false },
+    { path: '/auth/login', title: 'Logout', icon: LogOut, type: 'link', active: false }
 ];

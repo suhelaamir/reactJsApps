@@ -118,7 +118,7 @@ class LoginTabset extends Component {
         return state.user.password === confirmPassword;
     }
 
-    handleChange(event) {
+    handleChange = (event) => {
         event.preventDefault();
         const { name, value } = event.target;
         this.setState({ [name]: value });
@@ -183,16 +183,17 @@ class LoginTabset extends Component {
         this.props.setLoggedIn(false, {});
     }
 
-    handleInputChange(event) {
+    handleInputChange=(event) => {
+        debugger;
         event.preventDefault();
         const { name, value } = event.target;
         const {user} = this.state;
-        this.setState(
-            { 
+        this.setState({
+            user: { 
                 ...user,
                 [name]: value 
             }
-            );
+        });
     }
 
     clearRegForm = () => {
@@ -211,6 +212,7 @@ class LoginTabset extends Component {
     }
 
     handleSubmit = (event) => {
+        debugger;
         event.preventDefault();
         this.setState({regSubmitted: true});
         const {user} = this.state;
@@ -239,6 +241,7 @@ class LoginTabset extends Component {
     }
 
     render() {
+        debugger;
         //destructuring exthe state value
         const { userName, password, loginSubmitted, user, regSubmitted } = this.state;
         let _validatorReg = regSubmitted ? this.validatorReg.validate(this.state, 'user') : this.state.validationReg;

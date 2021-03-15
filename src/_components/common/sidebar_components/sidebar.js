@@ -19,6 +19,7 @@ class Sidebar extends Component {
     }
 
     setNavActive(item) {
+        debugger;
         MENUITEMS.filter(menuItem => {
             if(menuItem != item) {
                 menuItem.active = false;
