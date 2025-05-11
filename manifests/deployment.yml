@@ -1,0 +1,19 @@
+apiVersion : apps/v1
+kind: Deployment
+metadata:
+  name: reactjsapp 
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: reactjsapp
+  template:
+    metadata:
+      labels:
+        app: reactjsapp 
+    spec:
+      containers:
+        - name: reactjsapp 
+          image: azmyacr.azurecr.io/reactjsapp
+          ports:
+          - containerPort: 80
